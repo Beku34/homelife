@@ -17,6 +17,7 @@ from django.core.mail.backends.smtp import EmailBackend
 import ssl
 from decouple import config
 
+import cloudinary
 import certifi
 import os
 os.environ['SSL_CERT_FILE'] = certifi.where()
@@ -53,6 +54,8 @@ INSTALLED_APPS = [
     'django_filters',
     'decouple',
     'drf_yasg',
+    'cloudinary_storage',
+    'cloudinary',
 
 
     #auth
@@ -65,11 +68,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.twitter',
+    'djoser',
 
     #apps
     'product.apps.ProductConfig',
     'users.apps.UsersConfig',
-    'cart.apps.CartConfig'
+    'cart.apps.CartConfig',
+    'reviews.apps.ReviewsConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -152,7 +158,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 # Default primary key field type
@@ -197,7 +203,7 @@ AUTH_USER_MODEL = 'users.User'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -212,4 +218,13 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'JTI_CLAIM': 'jti',
+}
+
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUD_NAME'),
+    'API_KEY': config('API_KEY'),
+    'API_SECRET': config('API_SECRET'),
 }

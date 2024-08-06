@@ -38,3 +38,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+    def average_rating(self):
+        reviews = self.reviews.filter(active=True)
+        if reviews.exists():
+            return reviews.aggregate(models.Avg('rating'))['rating__avg']
+        return 0
+
+    def __str__(self):
+        return self.name
